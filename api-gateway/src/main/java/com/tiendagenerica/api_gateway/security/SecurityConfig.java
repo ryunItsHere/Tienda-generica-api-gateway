@@ -32,12 +32,20 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Tu Frontend en Docker
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+
+        // 1. Permitimos el origen de tu Frontend
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+
+        // 2. IMPORTANTE: Añadimos PATCH y OPTIONS (para el preflight)
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+
+        // 3. Permitimos todos los headers para evitar que el navegador bloquee por headers faltantes
+        config.setAllowedHeaders(Arrays.asList("*"));
+
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // Aplicamos esto a todas las rutas que pasan por el Gateway
         source.registerCorsConfiguration("/**", config);
         return source;
     }
